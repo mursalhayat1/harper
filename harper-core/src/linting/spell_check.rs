@@ -202,6 +202,22 @@ mod tests {
         );
     }
 
+    // A misspelling whose letters match a dictionary word exactly, save for
+    // case ("ai" → "AI"), should suggest that word's case.
+    #[test]
+    fn suggest_ai_for_ai_lowercase() {
+        assert_suggestion_result("ai", test_linter(), "AI");
+    }
+
+    #[test]
+    fn suggest_ai_for_ai_lowercase_in_sentence() {
+        assert_suggestion_result(
+            "I asked the ai for help.",
+            test_linter(),
+            "I asked the AI for help.",
+        );
+    }
+
     // Dialect tests
 
     #[test]

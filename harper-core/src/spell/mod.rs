@@ -297,6 +297,20 @@ fn score_suggestion(misspelled_word: &[char], sug: &FuzzyMatchResult) -> i32 {
         return i32::MAX;
     }
 
+    // Strongly favor a candidate variant that has the same sequence of
+    // letters as the misspelled word but a different capitalization,
+    // e.g. "ai" -> "AI" or "teh" -> "the". Such a correction is almost
+    // always the intended word, rather than a differently spelled word
+    // that merely shares the first letter.
+    if misspelled_word.len() == sug.word.len()
+        && misspelled_word
+            .iter()
+            .zip(sug.word.iter())
+            .all(|(a, b)| a.to_ascii_lowercase() == b.to_ascii_lowercase())
+    {
+        return -100;
+    }
+
     let mut score = sug.edit_distance as i32 * 10;
 
     // People are much less likely to mistype the first letter.
